@@ -728,43 +728,90 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
     column: SortColumn,
     label: string,
     align: 'left' | 'right' | 'center' = 'left',
-  ) => (
-    <Box
-      onClick={() => handleSort(column)}
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 0.5,
-        cursor: 'pointer',
-        userSelect: 'none',
-        width: '100%',
-        height: '100%',
-        px: align === 'center' ? 0.5 : 2,
-        py: 1,
-        justifyContent:
-          align === 'right'
-            ? 'flex-end'
-            : align === 'center'
-              ? 'center'
-              : 'flex-start',
-      }}
-    >
-      {label}
-      {sortColumn === column && (
-        <Typography component="span" sx={{ fontSize: '0.7rem', opacity: 0.7 }}>
-          {sortDirection === 'asc' ? '▲' : '▼'}
+  ) => {
+    const isActive = sortColumn === column;
+    const sortArrow = sortDirection === 'asc' ? '▲' : '▼';
+    const justifyContent =
+      align === 'right'
+        ? 'flex-end'
+        : align === 'center'
+          ? 'center'
+          : 'flex-start';
+
+    return (
+      <Box
+        component="button"
+        type="button"
+        onClick={() => handleSort(column)}
+        aria-label={`Sort by ${label}`}
+        sx={{
+          alignItems: 'center',
+          backgroundColor: 'transparent',
+          border: 0,
+          color: 'inherit',
+          cursor: 'pointer',
+          display: 'flex',
+          font: 'inherit',
+          height: '100%',
+          justifyContent,
+          letterSpacing: 'inherit',
+          m: 0,
+          px: align === 'center' ? 0.5 : 2,
+          py: 1,
+          textAlign: align,
+          textTransform: 'inherit',
+          transition: 'background-color 0.2s ease',
+          userSelect: 'none',
+          width: '100%',
+          '&:hover': {
+            backgroundColor: 'surface.light',
+          },
+          '&:focus-visible': {
+            outline: '2px solid',
+            outlineColor: 'primary.main',
+            outlineOffset: -2,
+          },
+        }}
+      >
+        {align === 'center' ? (
+          <Box component="span" sx={{ width: '0.9rem', flexShrink: 0 }} />
+        ) : null}
+        <Typography
+          component="span"
+          sx={{
+            fontSize: 'inherit',
+            lineHeight: 1.2,
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {label}
         </Typography>
-      )}
-    </Box>
-  );
+        <Box
+          component="span"
+          aria-hidden="true"
+          sx={{
+            display: 'inline-flex',
+            flexShrink: 0,
+            fontSize: '0.7rem',
+            justifyContent: 'center',
+            lineHeight: 1,
+            opacity: isActive ? 0.7 : 0,
+            transition: 'opacity 0.15s ease',
+            width: '0.9rem',
+          }}
+        >
+          {sortArrow}
+        </Box>
+      </Box>
+    );
+  };
 
   const sortableHeaderSx = {
     padding: 0,
-    cursor: 'pointer',
     userSelect: 'none' as const,
-    '&:hover': {
-      backgroundColor: 'surface.light',
-    },
   };
 
   const listColumns: DataTableColumn<RepoStats, SortColumn>[] = [
@@ -778,7 +825,7 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
     {
       key: 'repository',
       header: renderSortHeader('repository', 'Repository'),
-      width: '30%',
+      width: '320px',
       headerSx: sortableHeaderSx,
       cellSx: { pl: 1.5 },
       renderCell: (repo) => (
@@ -831,9 +878,9 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
     },
     {
       key: 'weight',
-      header: renderSortHeader('weight', 'Weight', 'right'),
-      width: '10%',
-      align: 'right',
+      header: renderSortHeader('weight', 'Weight', 'center'),
+      width: '120px',
+      align: 'center',
       headerSx: sortableHeaderSx,
       renderCell: (repo) => (
         <Typography
@@ -849,9 +896,9 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
     },
     {
       key: 'totalScore',
-      header: renderSortHeader('totalScore', 'OSS score', 'right'),
-      width: '11%',
-      align: 'right',
+      header: renderSortHeader('totalScore', 'OSS score', 'center'),
+      width: '132px',
+      align: 'center',
       headerSx: sortableHeaderSx,
       renderCell: (repo) => {
         const active = repoHasOssActivity(repo);
@@ -871,9 +918,9 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
     },
     {
       key: 'totalPRs',
-      header: renderSortHeader('totalPRs', 'PRs', 'right'),
-      width: '7%',
-      align: 'right',
+      header: renderSortHeader('totalPRs', 'PRs', 'center'),
+      width: '92px',
+      align: 'center',
       headerSx: sortableHeaderSx,
       renderCell: (repo) => {
         const active = repoHasOssActivity(repo);
@@ -892,9 +939,9 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
     },
     {
       key: 'discoveryScore',
-      header: renderSortHeader('discoveryScore', 'Issue score', 'right'),
-      width: '10%',
-      align: 'right',
+      header: renderSortHeader('discoveryScore', 'Issue score', 'center'),
+      width: '144px',
+      align: 'center',
       headerSx: sortableHeaderSx,
       renderCell: (repo) => {
         const active = repoHasDiscoveryActivity(repo);
@@ -914,9 +961,9 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
     },
     {
       key: 'discoveryIssues',
-      header: renderSortHeader('discoveryIssues', 'Issues', 'right'),
-      width: '7%',
-      align: 'right',
+      header: renderSortHeader('discoveryIssues', 'Issues', 'center'),
+      width: '108px',
+      align: 'center',
       headerSx: sortableHeaderSx,
       renderCell: (repo) => {
         const active = repoHasDiscoveryActivity(repo);
@@ -935,9 +982,9 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
     },
     {
       key: 'contributors',
-      header: renderSortHeader('contributors', 'Contributors', 'right'),
-      width: '9%',
-      align: 'right',
+      header: renderSortHeader('contributors', 'Contributors', 'center'),
+      width: '156px',
+      align: 'center',
       headerSx: sortableHeaderSx,
       renderCell: (repo) => {
         const active = repoHasOssActivity(repo);
@@ -959,10 +1006,10 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
       header: renderSortHeader(
         'discoveryContributors',
         'Issue contrib.',
-        'right',
+        'center',
       ),
-      width: '9%',
-      align: 'right',
+      width: '164px',
+      align: 'center',
       headerSx: sortableHeaderSx,
       renderCell: (repo) => {
         const active = repoHasDiscoveryActivity(repo);
@@ -1428,7 +1475,7 @@ const TopRepositoriesTable: React.FC<TopRepositoriesTableProps> = ({
               borderBottom: '1px solid',
               borderColor: 'surface.light',
             })}
-            minWidth="1280px"
+            minWidth="1360px"
             stickyHeader
             emptyState={
               !filteredRepositories.length &&
